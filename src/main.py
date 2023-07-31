@@ -69,8 +69,6 @@ def main():
             new_texture_path = result_dir / "textures/blocks" / raw_texture_subpath.parent
             new_texture = Image.new("RGBA", (width, height))
             new_texture.putdata([color for row in texture_color for color in row])
-            # new_image.show()
-            print(new_texture_path, f"{raw_texture_path.stem}_e")
             new_texture.save(new_texture_path / f"{raw_texture_path.stem}_e.png")
 
             if height > width:
