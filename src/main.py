@@ -38,10 +38,11 @@ def main():
         for raw_texture_path in raw_namespace_dir.rglob("*.png"):
             parts = raw_texture_path.parts
             raw_texture_subpath = Path("/".join(parts[parts.index("blocks") + 1 :]))
-            color_key = ":".join((mod_namespace, raw_texture_subpath.with_suffix("").as_posix()))
+            color_key = ":".join(
+                (mod_namespace, raw_texture_subpath.with_suffix("").as_posix())
+            )
             if color_key not in COLOR_MAP:
-                COLOR_MAP[color_key] = 0
-                continue
+                color = -1
             else:
                 color = COLOR_MAP[color_key]
 
@@ -54,19 +55,25 @@ def main():
             image = Image.open(raw_texture_path)
             width, height = image.size
             image_count = height // width
-            color = (
-                (color & 0xFF0000) >> 16,
-                (color & 0x00FF00) >> 8,
-                color & 0x0000FF,
-                255,
-            )
+            if color == -1:
+                color = image.getpixel((0, 0))
+                COLOR_MAP[color_key] = int("".join(hex(i)[2:].zfill(2) for i in color[:-1]), 16)
+            else:
+                color = (
+                    (color & 0xFF0000) >> 16,
+                    (color & 0x00FF00) >> 8,
+                    color & 0x0000FF,
+                    255,
+                )
             texture_color = [
                 [color] * width,
                 *([[color, *[TRANSPARENT_COLOR] * (width - 2), color]] * (width - 2)),
                 [color] * width,
             ] * image_count
 
-            new_texture_path = result_dir / "textures/blocks" / raw_texture_subpath.parent
+            new_texture_path = (
+                result_dir / "textures/blocks" / raw_texture_subpath.parent
+            )
             new_texture = Image.new("RGBA", (width, height))
             new_texture.putdata([color for row in texture_color for color in row])
             new_texture.save(new_texture_path / f"{raw_texture_path.stem}_e.png")
@@ -74,7 +81,8 @@ def main():
             if height > width:
                 mcmeta_name = f"{raw_texture_path.name}.mcmeta"
                 shutil.copyfile(
-                    raw_texture_path.parent / mcmeta_name, new_texture_path / mcmeta_name
+                    raw_texture_path.parent / mcmeta_name,
+                    new_texture_path / mcmeta_name,
                 )
 
     with open(COLOR_MAP_PATH, "w") as file:
