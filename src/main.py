@@ -54,7 +54,9 @@ def main():
             image_count = height // width
             if color == -1:
                 color = image.getpixel((0, 0))
-                COLOR_MAP[color_key] = hex((color[0] << 16) + (color[1] << 8) + color[2])
+                COLOR_MAP[color_key] = hex(
+                    (color[0] << 16) + (color[1] << 8) + color[2]
+                )
             else:
                 color = int(color[2:], 16)
                 color = (
