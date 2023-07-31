@@ -41,10 +41,7 @@ def main():
             color_key = ":".join(
                 (mod_namespace, raw_texture_subpath.with_suffix("").as_posix())
             )
-            if color_key not in COLOR_MAP:
-                color = -1
-            else:
-                color = COLOR_MAP[color_key]
+            color = COLOR_MAP.get(color_key, -1)
 
             optifine_emissive_path = mkdir(
                 result_dir / "optifine" / "emissive.properties"
@@ -52,7 +49,7 @@ def main():
             with open(optifine_emissive_path, "w") as file:
                 file.write("suffix.emissive=_e\n")
 
-            image = Image.open(raw_texture_path)
+            image = Image.open(raw_texture_path).convert("RGBA")
             width, height = image.size
             image_count = height // width
             if color == -1:
