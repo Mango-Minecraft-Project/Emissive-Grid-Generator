@@ -54,8 +54,9 @@ def main():
             image_count = height // width
             if color == -1:
                 color = image.getpixel((0, 0))
-                COLOR_MAP[color_key] = int("".join(hex(i)[2:].zfill(2) for i in color[:-1]), 16)
+                COLOR_MAP[color_key] = hex((color[0] << 16) + (color[1] << 8) + color[2])
             else:
+                color = int(color[2:], 16)
                 color = (
                     (color & 0xFF0000) >> 16,
                     (color & 0x00FF00) >> 8,
