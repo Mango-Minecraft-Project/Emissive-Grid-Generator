@@ -77,10 +77,9 @@ def main():
             new_texture.save(new_texture_path / f"{raw_texture_path.stem}_e.png")
 
             if height > width:
-                mcmeta_name = f"{raw_texture_path.name}.mcmeta"
-                shutil.copyfile(
-                    raw_texture_path.parent / mcmeta_name,
-                    new_texture_path / mcmeta_name,
+                shutil.copy(
+                    raw_texture_path.parent / f"{raw_texture_path.name}.mcmeta",
+                    new_texture_path / f"{raw_texture_path.stem}_e.png.mcmeta",
                 )
 
     with open(COLOR_MAP_PATH, "w") as file:
